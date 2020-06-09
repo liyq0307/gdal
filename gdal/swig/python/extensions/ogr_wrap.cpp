@@ -4970,6 +4970,12 @@ SWIGINTERN int OGRFieldDefnShadow_IsNullable(OGRFieldDefnShadow *self){
 SWIGINTERN void OGRFieldDefnShadow_SetNullable(OGRFieldDefnShadow *self,int bNullable){
     OGR_Fld_SetNullable( self, bNullable );
   }
+SWIGINTERN int OGRFieldDefnShadow_IsUnique(OGRFieldDefnShadow *self){
+    return OGR_Fld_IsUnique( self );
+  }
+SWIGINTERN void OGRFieldDefnShadow_SetUnique(OGRFieldDefnShadow *self,int bUnique){
+    OGR_Fld_SetUnique( self, bUnique );
+  }
 SWIGINTERN char const *OGRFieldDefnShadow_GetDefault(OGRFieldDefnShadow *self){
     return OGR_Fld_GetDefault( self );
   }
@@ -5348,6 +5354,9 @@ SWIGINTERN OGRGeometryShadow *OGRGeometryShadow_ConvexHull(OGRGeometryShadow *se
   }
 SWIGINTERN OGRGeometryShadow *OGRGeometryShadow_MakeValid(OGRGeometryShadow *self){
     return (OGRGeometryShadow*) OGR_G_MakeValid(self);
+  }
+SWIGINTERN OGRGeometryShadow *OGRGeometryShadow_RemoveLowerDimensionSubGeoms(OGRGeometryShadow *self){
+    return (OGRGeometryShadow*) OGR_G_RemoveLowerDimensionSubGeoms(self);
   }
 SWIGINTERN OGRGeometryShadow *OGRGeometryShadow_Buffer(OGRGeometryShadow *self,double distance,int quadsecs=30){
     return (OGRGeometryShadow*) OGR_G_Buffer( self, distance, quadsecs );
@@ -6984,6 +6993,11 @@ SWIGINTERN PyObject *_wrap_Driver_CopyDataSource(PyObject *SWIGUNUSEDPARM(self),
       {
         SWIG_fail;
       }
+    }
+  }
+  {
+    if (!arg2) {
+      SWIG_exception(SWIG_ValueError,"Received a NULL pointer.");
     }
   }
   {
@@ -20259,6 +20273,94 @@ fail:
 }
 
 
+SWIGINTERN PyObject *_wrap_FieldDefn_IsUnique(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0; int bLocalUseExceptionsCode = bUseExceptions;
+  OGRFieldDefnShadow *arg1 = (OGRFieldDefnShadow *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  int result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:FieldDefn_IsUnique",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_OGRFieldDefnShadow, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "FieldDefn_IsUnique" "', argument " "1"" of type '" "OGRFieldDefnShadow *""'"); 
+  }
+  arg1 = reinterpret_cast< OGRFieldDefnShadow * >(argp1);
+  {
+    if ( bUseExceptions ) {
+      ClearErrorState();
+    }
+    {
+      SWIG_PYTHON_THREAD_BEGIN_ALLOW;
+      result = (int)OGRFieldDefnShadow_IsUnique(arg1);
+      SWIG_PYTHON_THREAD_END_ALLOW;
+    }
+#ifndef SED_HACKS
+    if ( bUseExceptions ) {
+      CPLErr eclass = CPLGetLastErrorType();
+      if ( eclass == CE_Failure || eclass == CE_Fatal ) {
+        SWIG_exception( SWIG_RuntimeError, CPLGetLastErrorMsg() );
+      }
+    }
+#endif
+  }
+  resultobj = SWIG_From_int(static_cast< int >(result));
+  if ( ReturnSame(bLocalUseExceptionsCode) ) { CPLErr eclass = CPLGetLastErrorType(); if ( eclass == CE_Failure || eclass == CE_Fatal ) { Py_XDECREF(resultobj); SWIG_Error( SWIG_RuntimeError, CPLGetLastErrorMsg() ); return NULL; } }
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_FieldDefn_SetUnique(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0; int bLocalUseExceptionsCode = bUseExceptions;
+  OGRFieldDefnShadow *arg1 = (OGRFieldDefnShadow *) 0 ;
+  int arg2 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  int val2 ;
+  int ecode2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:FieldDefn_SetUnique",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_OGRFieldDefnShadow, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "FieldDefn_SetUnique" "', argument " "1"" of type '" "OGRFieldDefnShadow *""'"); 
+  }
+  arg1 = reinterpret_cast< OGRFieldDefnShadow * >(argp1);
+  ecode2 = SWIG_AsVal_int(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "FieldDefn_SetUnique" "', argument " "2"" of type '" "int""'");
+  } 
+  arg2 = static_cast< int >(val2);
+  {
+    if ( bUseExceptions ) {
+      ClearErrorState();
+    }
+    {
+      SWIG_PYTHON_THREAD_BEGIN_ALLOW;
+      OGRFieldDefnShadow_SetUnique(arg1,arg2);
+      SWIG_PYTHON_THREAD_END_ALLOW;
+    }
+#ifndef SED_HACKS
+    if ( bUseExceptions ) {
+      CPLErr eclass = CPLGetLastErrorType();
+      if ( eclass == CE_Failure || eclass == CE_Fatal ) {
+        SWIG_exception( SWIG_RuntimeError, CPLGetLastErrorMsg() );
+      }
+    }
+#endif
+  }
+  resultobj = SWIG_Py_Void();
+  if ( ReturnSame(bLocalUseExceptionsCode) ) { CPLErr eclass = CPLGetLastErrorType(); if ( eclass == CE_Failure || eclass == CE_Fatal ) { Py_XDECREF(resultobj); SWIG_Error( SWIG_RuntimeError, CPLGetLastErrorMsg() ); return NULL; } }
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
 SWIGINTERN PyObject *_wrap_FieldDefn_GetDefault(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0; int bLocalUseExceptionsCode = bUseExceptions;
   OGRFieldDefnShadow *arg1 = (OGRFieldDefnShadow *) 0 ;
@@ -24588,6 +24690,46 @@ SWIGINTERN PyObject *_wrap_Geometry_MakeValid(PyObject *SWIGUNUSEDPARM(self), Py
     {
       SWIG_PYTHON_THREAD_BEGIN_ALLOW;
       result = (OGRGeometryShadow *)OGRGeometryShadow_MakeValid(arg1);
+      SWIG_PYTHON_THREAD_END_ALLOW;
+    }
+#ifndef SED_HACKS
+    if ( bUseExceptions ) {
+      CPLErr eclass = CPLGetLastErrorType();
+      if ( eclass == CE_Failure || eclass == CE_Fatal ) {
+        SWIG_exception( SWIG_RuntimeError, CPLGetLastErrorMsg() );
+      }
+    }
+#endif
+  }
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_OGRGeometryShadow, SWIG_POINTER_OWN |  0 );
+  if ( ReturnSame(bLocalUseExceptionsCode) ) { CPLErr eclass = CPLGetLastErrorType(); if ( eclass == CE_Failure || eclass == CE_Fatal ) { Py_XDECREF(resultobj); SWIG_Error( SWIG_RuntimeError, CPLGetLastErrorMsg() ); return NULL; } }
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_Geometry_RemoveLowerDimensionSubGeoms(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0; int bLocalUseExceptionsCode = bUseExceptions;
+  OGRGeometryShadow *arg1 = (OGRGeometryShadow *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  OGRGeometryShadow *result = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:Geometry_RemoveLowerDimensionSubGeoms",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_OGRGeometryShadow, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Geometry_RemoveLowerDimensionSubGeoms" "', argument " "1"" of type '" "OGRGeometryShadow *""'"); 
+  }
+  arg1 = reinterpret_cast< OGRGeometryShadow * >(argp1);
+  {
+    if ( bUseExceptions ) {
+      ClearErrorState();
+    }
+    {
+      SWIG_PYTHON_THREAD_BEGIN_ALLOW;
+      result = (OGRGeometryShadow *)OGRGeometryShadow_RemoveLowerDimensionSubGeoms(arg1);
       SWIG_PYTHON_THREAD_END_ALLOW;
     }
 #ifndef SED_HACKS
@@ -32540,7 +32682,7 @@ static PyMethodDef SwigMethods[] = {
 		"By default, fields are nullable, so this method is generally called\n"
 		"with FALSE to set a not-null constraint.\n"
 		"\n"
-		"Drivers that support writing not-null constraint will advertize the\n"
+		"Drivers that support writing not-null constraint will advertise the\n"
 		"GDAL_DCAP_NOTNULL_FIELDS driver metadata item.\n"
 		"\n"
 		"This method is the same as the C++ method OGRFieldDefn::SetNullable().\n"
@@ -32554,6 +32696,8 @@ static PyMethodDef SwigMethods[] = {
 		"\n"
 		"GDAL 2.0 \n"
 		""},
+	 { (char *)"FieldDefn_IsUnique", _wrap_FieldDefn_IsUnique, METH_VARARGS, (char *)"FieldDefn_IsUnique(FieldDefn self) -> int"},
+	 { (char *)"FieldDefn_SetUnique", _wrap_FieldDefn_SetUnique, METH_VARARGS, (char *)"FieldDefn_SetUnique(FieldDefn self, int bUnique)"},
 	 { (char *)"FieldDefn_GetDefault", _wrap_FieldDefn_GetDefault, METH_VARARGS, (char *)"\n"
 		"FieldDefn_GetDefault(FieldDefn self) -> char const *\n"
 		"\n"
@@ -32597,7 +32741,7 @@ static PyMethodDef SwigMethods[] = {
 		"literal value, format should be 'YYYY/MM/DD HH:MM:SS[.sss]'\n"
 		"(considered as UTC time).\n"
 		"\n"
-		"Drivers that support writing DEFAULT clauses will advertize the\n"
+		"Drivers that support writing DEFAULT clauses will advertise the\n"
 		"GDAL_DCAP_DEFAULT_FIELDS driver metadata item.\n"
 		"\n"
 		"This function is the same as the C++ method\n"
@@ -33105,6 +33249,7 @@ static PyMethodDef SwigMethods[] = {
 		"\n"
 		"GDAL 3.0 \n"
 		""},
+	 { (char *)"Geometry_RemoveLowerDimensionSubGeoms", _wrap_Geometry_RemoveLowerDimensionSubGeoms, METH_VARARGS, (char *)"Geometry_RemoveLowerDimensionSubGeoms(Geometry self) -> Geometry"},
 	 { (char *)"Geometry_Buffer", (PyCFunction) _wrap_Geometry_Buffer, METH_VARARGS | METH_KEYWORDS, (char *)"\n"
 		"Geometry_Buffer(Geometry self, double distance, int quadsecs=30) -> Geometry\n"
 		"\n"
@@ -35122,8 +35267,10 @@ SWIG_init(void) {
   SWIG_Python_SetConstant(d, "ALTER_TYPE_FLAG",SWIG_From_int(static_cast< int >(2)));
   SWIG_Python_SetConstant(d, "ALTER_WIDTH_PRECISION_FLAG",SWIG_From_int(static_cast< int >(4)));
   SWIG_Python_SetConstant(d, "ALTER_NULLABLE_FLAG",SWIG_From_int(static_cast< int >(8)));
+  SWIG_Python_SetConstant(d, "ALTER__FLAG",SWIG_From_int(static_cast< int >(8)));
   SWIG_Python_SetConstant(d, "ALTER_DEFAULT_FLAG",SWIG_From_int(static_cast< int >(16)));
-  SWIG_Python_SetConstant(d, "ALTER_ALL_FLAG",SWIG_From_int(static_cast< int >(1+2+4+8+16)));
+  SWIG_Python_SetConstant(d, "ALTER_UNIQUE_FLAG",SWIG_From_int(static_cast< int >(32)));
+  SWIG_Python_SetConstant(d, "ALTER_ALL_FLAG",SWIG_From_int(static_cast< int >(1+2+4+8+16+32)));
   SWIG_Python_SetConstant(d, "F_VAL_NULL",SWIG_From_int(static_cast< int >(0x00000001)));
   SWIG_Python_SetConstant(d, "F_VAL_GEOM_TYPE",SWIG_From_int(static_cast< int >(0x00000002)));
   SWIG_Python_SetConstant(d, "F_VAL_WIDTH",SWIG_From_int(static_cast< int >(0x00000004)));

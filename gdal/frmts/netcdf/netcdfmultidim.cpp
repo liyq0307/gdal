@@ -162,7 +162,7 @@ class netCDFGroup final: public GDALGroup
     }
 
 public:
-    netCDFGroup(std::shared_ptr<netCDFSharedResources> poShared, int gid);
+    netCDFGroup(const std::shared_ptr<netCDFSharedResources>& poShared, int gid);
 
     std::vector<std::string> GetGroupNames(CSLConstList papszOptions) const override;
     std::shared_ptr<GDALGroup> OpenGroup(const std::string& osName,
@@ -228,7 +228,7 @@ class netCDFDimension final: public GDALDimension
     }
 
 public:
-    netCDFDimension(std::shared_ptr<netCDFSharedResources> poShared, int cfid,
+    netCDFDimension(const std::shared_ptr<netCDFSharedResources>& poShared, int cfid,
                     int dimid, size_t nForcedSize, const std::string& osType);
 
     std::shared_ptr<GDALMDArray> GetIndexingVariable() const override;
@@ -253,10 +253,10 @@ class netCDFAttribute final: public GDALAttribute
     mutable bool m_bPerfectDataTypeMatch = false;
 
 protected:
-    netCDFAttribute(std::shared_ptr<netCDFSharedResources> poShared,
+    netCDFAttribute(const std::shared_ptr<netCDFSharedResources>& poShared,
                     int gid, int varid, const std::string& name);
 
-    netCDFAttribute(std::shared_ptr<netCDFSharedResources> poShared,
+    netCDFAttribute(const std::shared_ptr<netCDFSharedResources>& poShared,
                     int gid, int varid, const std::string& osName,
                     const std::vector<GUInt64>& anDimensions,
                     const GDALExtendedDataType& oDataType,
@@ -278,11 +278,11 @@ protected:
 
 public:
     static std::shared_ptr<netCDFAttribute> Create(
-                    std::shared_ptr<netCDFSharedResources> poShared,
+                    const std::shared_ptr<netCDFSharedResources>& poShared,
                     int gid, int varid, const std::string& name);
 
     static std::shared_ptr<netCDFAttribute> Create(
-                    std::shared_ptr<netCDFSharedResources> poShared,
+                    const std::shared_ptr<netCDFSharedResources>& poShared,
                     int gid, int varid, const std::string& osName,
                     const std::vector<GUInt64>& anDimensions,
                     const GDALExtendedDataType& oDataType,
@@ -358,7 +358,7 @@ class netCDFVariable final: public GDALMDArray
                                     ReadOrWriteOneElementType ReadOrWriteOneElement) const;
 
 protected:
-    netCDFVariable(std::shared_ptr<netCDFSharedResources> poShared,
+    netCDFVariable(const std::shared_ptr<netCDFSharedResources>& poShared,
                    int gid, int varid,
                    const std::vector<std::shared_ptr<GDALDimension>>& dims,
                    CSLConstList papszOptions);
@@ -379,7 +379,7 @@ protected:
 
 public:
     static std::shared_ptr<netCDFVariable> Create(
-                   std::shared_ptr<netCDFSharedResources> poShared,
+                   const std::shared_ptr<netCDFSharedResources>& poShared,
                    int gid, int varid,
                    const std::vector<std::shared_ptr<GDALDimension>>& dims,
                    CSLConstList papszOptions)
@@ -488,7 +488,7 @@ static CPLString NCDFGetParentGroupName(int gid)
 /*                             netCDFGroup()                            */
 /************************************************************************/
 
-netCDFGroup::netCDFGroup(std::shared_ptr<netCDFSharedResources> poShared, int gid):
+netCDFGroup::netCDFGroup(const std::shared_ptr<netCDFSharedResources>& poShared, int gid):
     GDALGroup(NCDFGetParentGroupName(gid), retrieveName(gid)),
     m_poShared(poShared),
     m_gid(gid)
@@ -1065,7 +1065,7 @@ CSLConstList netCDFGroup::GetStructuralInfo() const
 /************************************************************************/
 
 netCDFDimension::netCDFDimension(
-                std::shared_ptr<netCDFSharedResources> poShared, int cfid,
+                const std::shared_ptr<netCDFSharedResources>& poShared, int cfid,
                 int dimid, size_t nForcedSize, const std::string& osType):
     GDALDimension(NCDFGetGroupFullName(cfid),
                   retrieveName(cfid, dimid),
@@ -1193,7 +1193,7 @@ std::shared_ptr<GDALMDArray> netCDFDimension::GetIndexingVariable() const
 /*                          netCDFVariable()                            */
 /************************************************************************/
 
-netCDFVariable::netCDFVariable(std::shared_ptr<netCDFSharedResources> poShared,
+netCDFVariable::netCDFVariable(const std::shared_ptr<netCDFSharedResources>& poShared,
                                int gid, int varid,
                                const std::vector<std::shared_ptr<GDALDimension>>& dims,
                                CSLConstList papszOptions):
@@ -2089,7 +2089,7 @@ lbl_start:
             while(true)
             {
                 // Simulate a recursive call to the next dimension
-                // Implictly save back count and ptr
+                // Implicitly save back count and ptr
                 dimIdx ++;
                 stack_ptr[dimIdx] = stack_ptr[dimIdx-1];
                 goto lbl_start;
@@ -2756,7 +2756,7 @@ static CPLString retrieveAttributeParentName(int gid, int varid)
 /************************************************************************/
 
 netCDFAttribute::netCDFAttribute(
-                    std::shared_ptr<netCDFSharedResources> poShared,
+                    const std::shared_ptr<netCDFSharedResources>& poShared,
                     int gid, int varid, const std::string& name):
     GDALAbstractMDArray(retrieveAttributeParentName(gid, varid), name),
     GDALAttribute(retrieveAttributeParentName(gid, varid), name),
@@ -2783,7 +2783,7 @@ netCDFAttribute::netCDFAttribute(
 /*                          netCDFAttribute()                           */
 /************************************************************************/
 
-netCDFAttribute::netCDFAttribute(std::shared_ptr<netCDFSharedResources> poShared,
+netCDFAttribute::netCDFAttribute(const std::shared_ptr<netCDFSharedResources>& poShared,
                    int gid, int varid, const std::string& osName,
                    const std::vector<GUInt64>& anDimensions,
                    const GDALExtendedDataType& oDataType,
@@ -2836,7 +2836,7 @@ netCDFAttribute::netCDFAttribute(std::shared_ptr<netCDFSharedResources> poShared
 /************************************************************************/
 
 std::shared_ptr<netCDFAttribute> netCDFAttribute::Create(
-                    std::shared_ptr<netCDFSharedResources> poShared,
+                    const std::shared_ptr<netCDFSharedResources>& poShared,
                     int gid, int varid, const std::string& name)
 {
     auto attr(std::shared_ptr<netCDFAttribute>(
@@ -2846,7 +2846,7 @@ std::shared_ptr<netCDFAttribute> netCDFAttribute::Create(
 }
 
 std::shared_ptr<netCDFAttribute> netCDFAttribute::Create(
-                   std::shared_ptr<netCDFSharedResources> poShared,
+                   const std::shared_ptr<netCDFSharedResources>& poShared,
                    int gid, int varid, const std::string& osName,
                    const std::vector<GUInt64>& anDimensions,
                    const GDALExtendedDataType& oDataType,
@@ -3003,7 +3003,7 @@ bool netCDFAttribute::IRead(const GUInt64* arrayStartIdx,
                                             m_nAttType);
     if( nElementSize == 0 )
         return false;
-    const auto nOuputDTSize = bufferDataType.GetSize();
+    const auto nOutputDTSize = bufferDataType.GetSize();
     std::vector<GByte> abyBuffer(
         static_cast<size_t>(GetTotalElementsCount()) * nElementSize);
     int ret = nc_get_att(m_gid, m_varid, GetName().c_str(), &abyBuffer[0]);
@@ -3052,7 +3052,7 @@ bool netCDFAttribute::IRead(const GUInt64* arrayStartIdx,
         if( !m_dims.empty() )
         {
             pabySrcBuffer += static_cast<std::ptrdiff_t>(arrayStep[0] * nElementSize);
-            pabyDstBuffer += nOuputDTSize * bufferStride[0];
+            pabyDstBuffer += nOutputDTSize * bufferStride[0];
         }
     }
 

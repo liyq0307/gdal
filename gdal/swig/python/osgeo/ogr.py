@@ -197,7 +197,9 @@ ALTER_NAME_FLAG = _ogr.ALTER_NAME_FLAG
 ALTER_TYPE_FLAG = _ogr.ALTER_TYPE_FLAG
 ALTER_WIDTH_PRECISION_FLAG = _ogr.ALTER_WIDTH_PRECISION_FLAG
 ALTER_NULLABLE_FLAG = _ogr.ALTER_NULLABLE_FLAG
+ALTER__FLAG = _ogr.ALTER__FLAG
 ALTER_DEFAULT_FLAG = _ogr.ALTER_DEFAULT_FLAG
+ALTER_UNIQUE_FLAG = _ogr.ALTER_UNIQUE_FLAG
 ALTER_ALL_FLAG = _ogr.ALTER_ALL_FLAG
 F_VAL_NULL = _ogr.F_VAL_NULL
 F_VAL_GEOM_TYPE = _ogr.F_VAL_GEOM_TYPE
@@ -5489,7 +5491,7 @@ class FieldDefn(_object):
         By default, fields are nullable, so this method is generally called
         with FALSE to set a not-null constraint.
 
-        Drivers that support writing not-null constraint will advertize the
+        Drivers that support writing not-null constraint will advertise the
         GDAL_DCAP_NOTNULL_FIELDS driver metadata item.
 
         This method is the same as the C++ method OGRFieldDefn::SetNullable().
@@ -5504,6 +5506,16 @@ class FieldDefn(_object):
         GDAL 2.0 
         """
         return _ogr.FieldDefn_SetNullable(self, *args)
+
+
+    def IsUnique(self, *args):
+        """IsUnique(FieldDefn self) -> int"""
+        return _ogr.FieldDefn_IsUnique(self, *args)
+
+
+    def SetUnique(self, *args):
+        """SetUnique(FieldDefn self, int bUnique)"""
+        return _ogr.FieldDefn_SetUnique(self, *args)
 
 
     def GetDefault(self, *args):
@@ -5554,7 +5566,7 @@ class FieldDefn(_object):
         literal value, format should be 'YYYY/MM/DD HH:MM:SS[.sss]'
         (considered as UTC time).
 
-        Drivers that support writing DEFAULT clauses will advertize the
+        Drivers that support writing DEFAULT clauses will advertise the
         GDAL_DCAP_DEFAULT_FIELDS driver metadata item.
 
         This function is the same as the C++ method
@@ -6380,6 +6392,11 @@ class Geometry(_object):
         GDAL 3.0 
         """
         return _ogr.Geometry_MakeValid(self, *args)
+
+
+    def RemoveLowerDimensionSubGeoms(self, *args):
+        """RemoveLowerDimensionSubGeoms(Geometry self) -> Geometry"""
+        return _ogr.Geometry_RemoveLowerDimensionSubGeoms(self, *args)
 
 
     def Buffer(self, *args, **kwargs):

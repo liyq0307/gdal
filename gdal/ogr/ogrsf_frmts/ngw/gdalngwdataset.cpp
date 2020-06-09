@@ -267,7 +267,7 @@ bool OGRNGWDataset::Init(int nOpenFlagsIn)
             else if( (osResourceType == "vector_layer" ||
                 osResourceType == "postgis_layer") )
             {
-                // Cehck feature paging.
+                // Check feature paging.
                 FillCapabilities( papszHTTPOptions );
                 // Add vector layer.
                 AddLayer( oRoot, papszHTTPOptions, nOpenFlagsIn );
@@ -627,16 +627,11 @@ OGRLayer *OGRNGWDataset::ICreateLayer( const char *pszNameIn,
     // Create layer.
     std::string osKey = CSLFetchNameValueDef( papszOptions, "KEY", "");
     std::string osDesc = CSLFetchNameValueDef( papszOptions, "DESCRIPTION", "");
-    OGRSpatialReference* poSRSClone = poSpatialRef;
-    if( poSRSClone )
-    {
-        poSRSClone = poSRSClone->Clone();
-        poSRSClone->SetAxisMappingStrategy(OAMS_TRADITIONAL_GIS_ORDER);
-    }
+    OGRSpatialReference* poSRSClone = poSpatialRef->Clone();
+    poSRSClone->SetAxisMappingStrategy(OAMS_TRADITIONAL_GIS_ORDER);
     OGRNGWLayer *poLayer = new OGRNGWLayer( this, pszNameIn, poSRSClone, eGType,
         osKey, osDesc );
-    if( poSRSClone )
-        poSRSClone->Release();
+    poSRSClone->Release();
     papoLayers = (OGRNGWLayer**) CPLRealloc(papoLayers, (nLayers + 1) *
         sizeof(OGRNGWLayer*));
     papoLayers[nLayers++] = poLayer;
@@ -820,7 +815,7 @@ char **OGRNGWDataset::GetHeaders() const
 /*
  * SQLUnescape()
  * Get from gdal/ogr/ogrsf_frmts/sqlite/ogrsqliteutility.cpp as we don't want
- * depenency on sqlite
+ * dependency on sqlite
  */
 static CPLString SQLUnescape( const char *pszVal )
 {
@@ -848,7 +843,7 @@ static CPLString SQLUnescape( const char *pszVal )
 /*
  * SQLTokenize()
  * Get from gdal/ogr/ogrsf_frmts/sqlite/ogrsqliteutility.cpp as we don't want
- * depenency on sqlite
+ * dependency on sqlite
  */
 static char **SQLTokenize( const char *pszStr )
 {

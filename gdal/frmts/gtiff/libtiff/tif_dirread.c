@@ -864,7 +864,7 @@ static enum TIFFReadDirEntryErr TIFFReadDirEntryArrayWithLimit(
 	datasize=(*count)*typesize;
 	assert((tmsize_t)datasize>0);
 
-	if( isMapped(tif) && datasize > (uint32)tif->tif_size )
+	if( isMapped(tif) && datasize > (uint64)tif->tif_size )
 		return TIFFReadDirEntryErrIo;
 
 	if( !isMapped(tif) &&
@@ -3400,7 +3400,7 @@ TIFFReadDirEntryData(TIFF* tif, uint64 offset, tmsize_t size, void* dest)
                     return TIFFReadDirEntryErrIo;
                 }
 		mb=ma+size;
-		if (mb > (size_t)tif->tif_size)
+		if (mb > (uint64)tif->tif_size)
 			return(TIFFReadDirEntryErrIo);
 		_TIFFmemcpy(dest,tif->tif_base+ma,size);
 	}
@@ -4441,6 +4441,7 @@ TIFFReadCustomDirectory(TIFF* tif, toff_t diroff,
 	uint16 di;
 	const TIFFField* fip;
 	uint32 fii;
+        (*tif->tif_cleanup)(tif);   /* cleanup any previous compression state */
 	_TIFFSetupFields(tif, infoarray);
 	dircount=TIFFFetchDirectory(tif,diroff,&dir,NULL);
 	if (!dircount)
@@ -4543,6 +4544,17 @@ TIFFReadEXIFDirectory(TIFF* tif, toff_t diroff)
 	const TIFFFieldArray* exifFieldArray;
 	exifFieldArray = _TIFFGetExifFields();
 	return TIFFReadCustomDirectory(tif, diroff, exifFieldArray);  
+}
+
+/*
+ *--: EXIF-GPS custom directory reading as another special case of custom IFD.
+ */
+int
+TIFFReadGPSDirectory(TIFF* tif, toff_t diroff)
+{
+	const TIFFFieldArray* gpsFieldArray;
+	gpsFieldArray = _TIFFGetGpsFields();
+	return TIFFReadCustomDirectory(tif, diroff, gpsFieldArray);  
 }
 
 static int
@@ -5264,10 +5276,33 @@ TIFFFetchNormalTag(TIFF* tif, TIFFDirEntry* dp, int recover)
 				assert(fip->field_readcount>=1);
 				assert(fip->field_passcount==0);
 				if (dp->tdir_count!=(uint64)fip->field_readcount)
-                                    /* corrupt file */;
+					/* corrupt file */;
 				else
 				{
 					err=TIFFReadDirEntryFloatArray(tif,dp,&data);
+					if (err==TIFFReadDirEntryErrOk)
+					{
+						int m;
+						m=TIFFSetField(tif,dp->tdir_tag,data);
+						if (data!=0)
+							_TIFFfree(data);
+						if (!m)
+							return(0);
+					}
+				}
+			}
+			break;
+		/*--: Rational2Double: Extend for Double Arrays and Rational-Arrays read into Double-Arrays. */
+		case TIFF_SETGET_C0_DOUBLE:
+			{
+				double* data;
+				assert(fip->field_readcount>=1);
+				assert(fip->field_passcount==0);
+				if (dp->tdir_count!=(uint64)fip->field_readcount)
+					/* corrupt file */;
+				else
+				{
+					err=TIFFReadDirEntryDoubleArray(tif,dp,&data);
 					if (err==TIFFReadDirEntryErrOk)
 					{
 						int m;
@@ -6404,7 +6439,7 @@ static int _TIFFFillStrilesInternal( TIFF *tif, int loadStripByteCount )
     if( td->td_stripoffset_p != NULL )
             return 1;
 
-    /* If tdir_count was cancelled, then we already got there, but in error */
+    /* If tdir_count was canceled, then we already got there, but in error */
     if( td->td_stripoffset_entry.tdir_count == 0 )
             return 0;
 

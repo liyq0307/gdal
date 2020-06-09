@@ -1,7 +1,7 @@
 /******************************************************************************
  * $Id$
  *
- * Project:  ElasticSearch Translator
+ * Project:  Elasticsearch Translator
  * Purpose:
  * Author:
  *
@@ -51,7 +51,6 @@ typedef enum
 
 class OGRElasticDataSource;
 
-// cppcheck-suppress copyCtorAndEqOperator
 class OGRESSortDesc
 {
     public:
@@ -61,9 +60,6 @@ class OGRESSortDesc
         OGRESSortDesc( const CPLString& osColumnIn, bool bAscIn ) :
             osColumn(osColumnIn),
             bAsc(bAscIn) {}
-        OGRESSortDesc(const OGRESSortDesc& other) :
-            osColumn(other.osColumn),
-            bAsc(other.bAsc) {}
 };
 
 /************************************************************************/

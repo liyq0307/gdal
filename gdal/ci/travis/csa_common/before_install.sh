@@ -3,7 +3,7 @@
 set -e
 
 sudo apt-get purge -y libgeos*
-sudo mv /etc/apt/sources.list.d/pgdg* /tmp
+(sudo mv /etc/apt/sources.list.d/pgdg* /tmp || /bin/true)
 #sudo apt-get remove postgresql-9.2
 #sudo apt-get remove postgis libpq5 libpq-dev postgresql-9.1-postgis postgresql-9.1-postgis-2.2-scripts postgresql-9.2-postgis postgresql-9.3-postgis postgresql-9.1 postgresql-9.2 postgresql-9.3 libgdal1
 sudo add-apt-repository -y ppa:ubuntugis/ubuntugis-unstable
@@ -38,14 +38,14 @@ tar xzf install-libecwj2-ubuntu12.04-64bit.tar.gz
 sudo cp -r install-libecwj2/include/* /usr/local/include
 sudo cp -r install-libecwj2/lib/* /usr/local/lib
 
-wget https://bitbucket.org/chchrsc/kealib/get/c6d36f3db5e4.zip
-unzip c6d36f3db5e4.zip
-cd chchrsc-kealib-c6d36f3db5e4/trunk
-cmake . -DBUILD_SHARED_LIBS=ON -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr -DHDF5_INCLUDE_DIR=/usr/include/hdf5/serial -DHDF5_LIB_PATH=/usr/lib/x86_64-linux-gnu/hdf5/serial -DLIBKEA_WITH_GDAL=OFF
-make -j4
-sudo make install
-cd ../..
+wget https://github.com/ubarsc/kealib/archive/kealib-1.4.12.zip
+unzip kealib-1.4.12.zip
+(cd kealib-kealib-1.4.12;
+cmake . -DBUILD_SHARED_LIBS=ON -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr -DHDF5_INCLUDE_DIR=/usr/include -DHDF5_LIB_PATH=/usr/lib -DLIBKEA_WITH_GDAL=OFF;
+make -j4;
+sudo make install)
 sudo ldconfig
 
-wget http://releases.llvm.org/9.0.0/clang+llvm-9.0.0-x86_64-linux-gnu-ubuntu-16.04.tar.xz
-tar xJf clang+llvm-9.0.0-x86_64-linux-gnu-ubuntu-16.04.tar.xz
+FILE=clang+llvm-9.0.0-x86_64-linux-gnu-ubuntu-16.04.tar.xz
+URL_ROOT=https://github.com/rouault/gdal_ci_tools/raw/master/${FILE}
+curl -Ls ${URL_ROOT}aa ${URL_ROOT}ab ${URL_ROOT}ac ${URL_ROOT}ad ${URL_ROOT}ae | tar xJf -

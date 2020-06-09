@@ -226,6 +226,14 @@ char CPL_DLL **VSIGetFileSystemsPrefixes( void );
 
 void CPL_DLL   *VSIFGetNativeFileDescriptorL( VSILFILE* );
 
+char CPL_DLL  **VSIGetFileMetadata( const char * pszFilename, const char* pszDomain,
+                                    CSLConstList papszOptions ) CPL_WARN_UNUSED_RESULT;
+
+int CPL_DLL VSISetFileMetadata( const char * pszFilename,
+                                CSLConstList papszMetadata,
+                                const char* pszDomain,
+                                CSLConstList papszOptions );
+
 /* ==================================================================== */
 /*      Memory allocation                                               */
 /* ==================================================================== */
@@ -340,7 +348,7 @@ struct VSIDIREntry
 /*! @cond Doxygen_Suppress */
     VSIDIREntry();
     ~VSIDIREntry();
-    VSIDIREntry(const VSIDIREntry&) = delete;
+    VSIDIREntry(const VSIDIREntry&);
     VSIDIREntry& operator=(VSIDIREntry&) = delete;
 /*! @endcond */
 #endif
@@ -503,7 +511,7 @@ typedef int            (*VSIFilesystemPluginCloseCallback)         ( void *pFile
 
 /**
  * struct containing callbacks to used by the handler.
- * (rw), (r), (w) or () at the end indicate wether the given callback is mandatory
+ * (rw), (r), (w) or () at the end indicate whether the given callback is mandatory
  * for reading and or writing handlers. A (?) indicates that the callback might
  * be mandatory for certain drivers only.
  * @since GDAL 3.0

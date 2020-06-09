@@ -63,6 +63,9 @@ typedef char retStringAndCPLFree;
   }
 %}
 
+%rename (SetCurrentErrorHandlerCatchDebug) CPLSetCurrentErrorHandlerCatchDebug;
+void CPLSetCurrentErrorHandlerCatchDebug( int bCatchDebug );
+
 #ifdef SWIGPYTHON
 
 %nothread;
@@ -75,7 +78,7 @@ void CPL_STDCALL PyCPLErrorHandler(CPLErr eErrClass, int err_no, const char* psz
     if( GDALIsInGlobalDestructor() )
     {
         // this is typically during Python interpreter shutdown, and ends up in a crash
-        // because error handling tries to do thread initialisation.
+        // because error handling tries to do thread initialization.
         return;
     }
 
@@ -674,6 +677,20 @@ int wrapper_VSIStatL( const char * utf8_path, StatBuf *psStatBufOut, int nFlags 
 }
 
 #endif
+
+%rename (GetFileMetadata) VSIGetFileMetadata;
+%apply (char **dict) { char ** };
+char** VSIGetFileMetadata( const char *utf8_path, const char* domain,
+                           char** options = NULL );
+%clear char **;
+
+%rename (SetFileMetadata) VSISetFileMetadata;
+%apply (char **dict) { char ** metadata };
+bool VSISetFileMetadata( const char * utf8_path,
+                         char** metadata,
+                         const char* domain,
+                         char** options = NULL );
+%clear char **;
 
 %apply Pointer NONNULL {VSILFILE* fp};
 

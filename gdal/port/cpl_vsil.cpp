@@ -600,7 +600,7 @@ int VSIRename( const char * oldpath, const char * newpath )
  * /vsis3/, /vsigs/ or /vsiaz/</li>
  * </ul>
  *
- * Similarly to rsync behaviour, if the source filename ends with a slash,
+ * Similarly to rsync behavior, if the source filename ends with a slash,
  * it means that the content of the directory must be copied, but not the
  * directory name. For example, assuming "/home/even/foo" contains a file "bar",
  * VSISync("/home/even/foo/", "/mnt/media", ...) will create a "/mnt/media/bar"
@@ -608,7 +608,7 @@ int VSIRename( const char * oldpath, const char * newpath )
  * "/mnt/media/foo" directory which contains a bar file.
  *
  * @param pszSource Source file or directory.  UTF-8 encoded.
- * @param pszTarget Target file or direcotry.  UTF-8 encoded.
+ * @param pszTarget Target file or directory.  UTF-8 encoded.
  * @param papszOptions Null terminated list of options, or NULL.
  * Currently accepted options are:
  * <ul>
@@ -629,8 +629,16 @@ int VSIRename( const char * oldpath, const char * newpath )
  *     for files not using KMS server side encryption and uploaded in a single
  *     PUT operation (so smaller than 50 MB given the default used by GDAL).
  *     Only to be used for /vsis3/, /vsigs/ or other filesystems using a
- *     MD5Sum as ETAG.
- * </li>
+ *     MD5Sum as ETAG.</li>
+ * <li>NUM_THREADS=integer. Number of threads to use for parallel file copying.
+ *     Only use for when /vsis3/, /vsigs/ or /vsiaz/ is in source or target.
+ *     Since GDAL 3.1</li>
+ * <li>CHUNK_SIZE=integer. Maximum size of chunk (in bytes) to use to split
+ *     large objects when downloading them from /vsis3/, /vsigs/ or /vsiaz/ to
+ *     local file system, or for upload to /vsis3/ from local file system.
+ *     Only used if NUM_THREADS > 1.
+ *     For upload to /vsis3/, this chunk size will be set at least to 5 MB.
+ *     Since GDAL 3.1</li>
  * </ul>
  * @param pProgressFunc Progress callback, or NULL.
  * @param pProgressData User data of progress callback, or NULL.
@@ -819,6 +827,77 @@ int VSIStatExL( const char * pszFilename, VSIStatBufL *psStatBuf, int nFlags )
 
     return poFSHandler->Stat( pszFilename, psStatBuf, nFlags );
 }
+
+
+/************************************************************************/
+/*                       VSIGetFileMetadata()                           */
+/************************************************************************/
+
+/**
+ * \brief Get metadata on files.
+ *
+ * Implemented currently only for network-like filesystems.
+ *
+ * @param pszFilename the path of the filesystem object to be queried.
+ * UTF-8 encoded.
+ * @param pszDomain Metadata domain to query. Depends on the file system.
+ * The following are supported:
+ * <ul>
+ * <li>HEADERS: to get HTTP headers for network-like filesystems (/vsicurl/, /vsis3/, etc)</li>
+ * <li>TAGS: specific to /vsis3/: to get S3 Object tagging information</li>
+ * </ul>
+ * @param papszOptions Unused. Should be set to NULL.
+ *
+ * @return a NULL-terminated list of key=value strings, to be freed with CSLDestroy()
+ * or NULL in case of error / empty list.
+ *
+ * @since GDAL 3.1.0
+ */
+
+char** VSIGetFileMetadata( const char * pszFilename, const char* pszDomain,
+                           CSLConstList papszOptions )
+{
+    VSIFilesystemHandler *poFSHandler =
+        VSIFileManager::GetHandler( pszFilename );
+    return poFSHandler->GetFileMetadata( pszFilename, pszDomain, papszOptions );
+}
+
+/************************************************************************/
+/*                       VSISetFileMetadata()                           */
+/************************************************************************/
+
+/**
+ * \brief Set metadata on files.
+ *
+ * Implemented currently only for /vsis3/
+ *
+ * @param pszFilename the path of the filesystem object to be queried.
+ * UTF-8 encoded.
+ * @param papszMetadata NULL-terminated list of key=value strings.
+ * @param pszDomain Metadata domain to set. Depends on the file system.
+ * The following are supported:
+ * <ul>
+ * <li>HEADERS: to set HTTP header</li>
+ * <li>TAGS: to set S3 Object tagging information</li>
+ * </ul>
+ * @param papszOptions Unused. Should be set to NULL.
+ *
+ * @return TRUE in case of success.
+ *
+ * @since GDAL 3.1.0
+ */
+
+int VSISetFileMetadata( const char * pszFilename,
+                           CSLConstList papszMetadata,
+                           const char* pszDomain,
+                           CSLConstList papszOptions )
+{
+    VSIFilesystemHandler *poFSHandler =
+        VSIFileManager::GetHandler( pszFilename );
+    return poFSHandler->SetFileMetadata( pszFilename, papszMetadata, pszDomain,
+                                         papszOptions ) ? 1 : 0;
+}
+
 
 /************************************************************************/
 /*                       VSIIsCaseSensitiveFS()                         */
@@ -1224,6 +1303,21 @@ VSIDIREntry::VSIDIREntry(): pszName(nullptr), nMode(0), nSize(0), nMTime(0),
 }
 
 /************************************************************************/
+/*                            VSIDIREntry()                             */
+/************************************************************************/
+
+VSIDIREntry::VSIDIREntry(const VSIDIREntry& other):
+    pszName(VSIStrdup(other.pszName)),
+    nMode(other.nMode),
+    nSize(other.nSize),
+    nMTime(other.nMTime),
+    bModeKnown(other.bModeKnown),
+    bSizeKnown(other.bSizeKnown),
+    bMTimeKnown(other.bMTimeKnown),
+    papszExtra(CSLDuplicate(other.papszExtra))
+{}
+
+/************************************************************************/
 /*                           ~VSIDIREntry()                             */
 /************************************************************************/
 
@@ -1453,6 +1547,29 @@ int VSIFilesystemHandler::RmdirRecursive( const char* pszDirname )
     }
     CSLDestroy(papszFiles);
     return VSIRmdir(pszDirname);
+}
+
+/************************************************************************/
+/*                          GetFileMetadata()                           */
+/************************************************************************/
+
+char** VSIFilesystemHandler::GetFileMetadata( const char * /* pszFilename*/, const char* /*pszDomain*/,
+                                    CSLConstList /*papszOptions*/ )
+{
+    return nullptr;
+}
+
+/************************************************************************/
+/*                          SetFileMetadata()                           */
+/************************************************************************/
+
+bool VSIFilesystemHandler::SetFileMetadata( const char * /* pszFilename*/,
+                                    CSLConstList /* papszMetadata */,
+                                    const char* /* pszDomain */,
+                                    CSLConstList /* papszOptions */ )
+{
+    CPLError(CE_Failure, CPLE_NotSupported, "SetFileMetadata() not supported");
+    return false;
 }
 
 #endif

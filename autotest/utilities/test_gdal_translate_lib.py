@@ -122,7 +122,7 @@ def test_gdal_translate_lib_4():
 
 def test_gdal_translate_lib_5():
 
-    ds = gdal.Open('../gdrivers/data/bug407.gif')
+    ds = gdal.Open('../gdrivers/data/gif/bug407.gif')
     ds = gdal.Translate('tmp/test5.tif', ds, rgbExpand='rgb')
     assert ds is not None
 
@@ -295,7 +295,7 @@ def test_gdal_translate_lib_100():
 
     # Will create an implicit options structure
     with gdaltest.error_handler():
-        gdal.TranslateInternal('', gdal.Open('../gcore/data/byte.tif'), None, gdal.TermProgress)
+        gdal.TranslateInternal('', gdal.Open('../gcore/data/byte.tif'), None, gdal.TermProgress_nocb)
 
     # Null dest name
     try:

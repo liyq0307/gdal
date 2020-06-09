@@ -1549,7 +1549,7 @@ public:
             // but we set a special flag to allow vector&raster operations so
             // that the rendering will happen in the next phase
             if( bTemporaryEnableVectorForTextStroking )
-                return FALSE; // this is the default behaviour of the parent
+                return FALSE; // this is the default behavior of the parent
             bTemporaryEnableVectorForTextStroking = true;
             bool bRet = m_pDevice->DrawNormalText(nChars, pCharPos,
                                                      pFont,
@@ -7201,7 +7201,7 @@ void GDALRegister_PDF()
     poDriver->SetMetadataItem( GDAL_DCAP_RASTER, "YES" );
     poDriver->SetMetadataItem( GDAL_DCAP_VECTOR, "YES" );
     poDriver->SetMetadataItem( GDAL_DMD_LONGNAME, "Geospatial PDF" );
-    poDriver->SetMetadataItem( GDAL_DMD_HELPTOPIC, "frmt_pdf.html" );
+    poDriver->SetMetadataItem( GDAL_DMD_HELPTOPIC, "drivers/raster/pdf.html" );
     poDriver->SetMetadataItem( GDAL_DMD_EXTENSION, "pdf" );
     poDriver->SetMetadataItem( GDAL_DMD_CREATIONDATATYPES, "Byte" );
     poDriver->SetMetadataItem( GDAL_DMD_CREATIONFIELDDATATYPES,

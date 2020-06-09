@@ -65,7 +65,7 @@ enum class OGRWktFormat
 };
 
 /// Options for formatting WKT output
-struct OGRWktOptions
+struct CPL_DLL OGRWktOptions
 {
 public:
     /// Type of WKT output to produce.
@@ -2981,6 +2981,8 @@ class CPL_DLL OGRGeometryFactory
     static OGRGeometry * forceTo( OGRGeometry* poGeom,
                                   OGRwkbGeometryType eTargetType,
                                   const char*const* papszOptions = nullptr );
+
+    static OGRGeometry * removeLowerDimensionSubGeoms( const OGRGeometry* poGeom );
 
     static OGRGeometry * organizePolygons( OGRGeometry **papoPolygons,
                                            int nPolygonCount,
